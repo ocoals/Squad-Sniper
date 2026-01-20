@@ -237,7 +237,12 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
 
       const assignment: AssignedPlayer = { player: currentPlayer, role: playerRole };
       setCurrentResult(assignment);
-      setAssignedPlayers(prev => [...prev, assignment]);
+
+      setAssignedPlayers(prev => {
+        if (prev.some(p => p.player.id === currentPlayer.id)) return prev;
+        return [...prev, assignment];
+      });
+
       setAvailableRoles(prev => prev.filter(r => r.shortName !== playerRole.shortName));
 
       if (soundEnabled) playBeep('hit');
@@ -278,7 +283,11 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
 
       const assignment: AssignedPlayer = { player: currentPlayer, role: playerRole };
       setCurrentResult(assignment);
-      setAssignedPlayers(prev => [...prev, assignment]);
+
+      setAssignedPlayers(prev => {
+        if (prev.some(p => p.player.id === currentPlayer.id)) return prev;
+        return [...prev, assignment];
+      });
 
       // Remove the role we just assigned from available (for display purposes)
       setAvailableRoles(prev => prev.filter(r => r.shortName !== playerRole.shortName));
@@ -292,7 +301,27 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
 
   // Next player
   const handleNextPlayer = () => {
-    if (currentPlayerIndex + 1 >= players.length || availableRoles.length === 0) {
+    // If we are about to move to the last player (one remaining), auto-assign and finish
+    const nextIndex = currentPlayerIndex + 1;
+
+    if (nextIndex >= players.length) {
+      setIsComplete(true);
+      return;
+    }
+
+    if (nextIndex === players.length - 1) {
+      // Last player remaining! Auto-assign without shooting
+      const lastPlayerIndex = shuffledIndices[nextIndex];
+      const lastPlayer = players[lastPlayerIndex];
+      const lastRole = initialRoles[lastPlayerIndex];
+
+      const assignment: AssignedPlayer = { player: lastPlayer, role: lastRole };
+
+      setAssignedPlayers(prev => {
+        if (prev.some(p => p.player.id === lastPlayer.id)) return prev;
+        return [...prev, assignment];
+      });
+
       setIsComplete(true);
     } else {
       setCurrentPlayerIndex(prev => prev + 1);
@@ -358,7 +387,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
           </h1>
           <div className="flex items-center gap-3 mt-1 flex-wrap">
             <div className="px-2 py-1 bg-red-500/30 rounded border border-red-500/50 text-red-400 text-xs font-mono">
-              DRAFTING: <span className="text-white font-bold">{currentPlayer?.name}</span>
+              DRAFTING: <span className="text-white font-bold text-lg tracking-widest ml-1">???</span>
             </div>
             <div className="text-gray-500 text-xs font-mono">
               {remainingPlayers} left • {availableRoles.length} roles
