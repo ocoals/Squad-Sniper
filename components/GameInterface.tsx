@@ -58,6 +58,10 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
   const [assignedPlayers, setAssignedPlayers] = useState<AssignedPlayer[]>([]);
   const [isComplete, setIsComplete] = useState(false);
 
+  // Shuffle player order so they don't appear sequentially by number (e.g. 1 -> 2 -> 3...)
+  // But each player still keeps their predetermined role based on their original index
+  const shuffledIndices = useMemo(() => shuffleArray(Array.from({ length: players.length }, (_, i) => i)), [players.length]);
+
   // Shooting state
   const [isShooting, setIsShooting] = useState(false);
   const [scopePos, setScopePos] = useState({ x: 50, y: 40 });
@@ -83,7 +87,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
   const timerRef = useRef<NodeJS.Timeout>();
   const lastTickRef = useRef<number>(SHOT_CLOCK_SECONDS);
 
-  const currentPlayer = players[currentPlayerIndex];
+  const currentPlayer = players[shuffledIndices[currentPlayerIndex]]; // Use shuffled index
   const remainingPlayers = players.length - currentPlayerIndex;
 
   // Initialize target positions
@@ -228,7 +232,8 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
 
     setTimeout(() => {
       // Assign the player's predetermined role (same as normal shot)
-      const playerRole = initialRoles[currentPlayerIndex];
+      const actualPlayerIndex = shuffledIndices[currentPlayerIndex];
+      const playerRole = initialRoles[actualPlayerIndex];
 
       const assignment: AssignedPlayer = { player: currentPlayer, role: playerRole };
       setCurrentResult(assignment);
@@ -239,7 +244,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
       setShowFlash(true);
       setTimeout(() => setShowFlash(false), 150);
     }, 300);
-  }, [isShooting, availableRoles, currentPlayer, currentPlayerIndex, initialRoles, soundEnabled]);
+  }, [isShooting, availableRoles, currentPlayer, currentPlayerIndex, shuffledIndices, initialRoles, soundEnabled]);
 
   // Normal shot - ONLY works when targeting a jersey
   const handleShoot = useCallback(() => {
@@ -268,7 +273,8 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
 
     setTimeout(() => {
       // Assign the player's predetermined role based on their index (not the jersey they shot)
-      const playerRole = initialRoles[currentPlayerIndex];
+      const actualPlayerIndex = shuffledIndices[currentPlayerIndex];
+      const playerRole = initialRoles[actualPlayerIndex];
 
       const assignment: AssignedPlayer = { player: currentPlayer, role: playerRole };
       setCurrentResult(assignment);
