@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { Player } from '../types';
-import { Play, Plus, Trash2, Users, Target, UserPlus } from 'lucide-react';
-import { COLORS, APP_NAME, ROLE_DEFINITIONS, EXTRA_ROLE_DEFINITIONS } from '../constants';
+import { Play, Plus, Trash2, Users, Target, UserPlus, Globe, ChevronDown } from 'lucide-react';
+import { COLORS, APP_NAME, ROLE_DEFINITIONS, EXTRA_ROLE_DEFINITIONS, Language } from '../constants';
 
 interface SetupScreenProps {
     players: Player[];
     onPlayersChange: (players: Player[]) => void;
     onStart: () => void;
+    language: Language;
+    onLanguageChange: (lang: Language) => void;
 }
 
-export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChange, onStart }) => {
+export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChange, onStart, language, onLanguageChange }) => {
     const [newName, setNewName] = useState('');
 
     const handleAddPlayer = () => {
@@ -21,6 +23,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
             role: '',
             number: 0,
             color: COLORS[players.length % COLORS.length],
+            customRole: players.length >= ROLE_DEFINITIONS.length ? EXTRA_ROLE_DEFINITIONS[0]?.shortName : undefined,
         };
 
         onPlayersChange([...players, newPlayer]);
@@ -37,6 +40,18 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
         onPlayersChange(players.filter(p => p.id !== id));
     };
 
+    const handleRoleChange = (playerId: string, roleShortName: string) => {
+        onPlayersChange(players.map(p =>
+            p.id === playerId ? { ...p, customRole: roleShortName } : p
+        ));
+    };
+
+    const handleMissionChange = (playerId: string, mission: string) => {
+        onPlayersChange(players.map(p =>
+            p.id === playerId ? { ...p, customMission: mission } : p
+        ));
+    };
+
     const totalRolesAvailable = ROLE_DEFINITIONS.length + EXTRA_ROLE_DEFINITIONS.length;
     const isExtraPlayers = players.length > ROLE_DEFINITIONS.length;
 
@@ -51,9 +66,26 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                 {/* Left Column: Title & Info */}
                 <div className="flex flex-col justify-center text-left space-y-4">
                     <div>
-                        <span className="inline-block px-3 py-1 bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-mono mb-2 rounded tracking-widest">
-                            🎯 DRAFT MODE
-                        </span>
+                        <div className="flex items-center gap-4 mb-2">
+                            <span className="inline-block px-3 py-1 bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-mono rounded tracking-widest">
+                                🎯 DRAFT MODE
+                            </span>
+                            {/* Language Toggle - Near Title */}
+                            <div className="flex">
+                                <button
+                                    onClick={() => onLanguageChange('en')}
+                                    className={`px-3 py-1 text-xs font-bold transition-all rounded-l-md border ${language === 'en' ? 'bg-orange-500 text-white border-orange-500' : 'bg-black/50 text-gray-400 border-gray-600 hover:text-white'}`}
+                                >
+                                    EN
+                                </button>
+                                <button
+                                    onClick={() => onLanguageChange('ko')}
+                                    className={`px-3 py-1 text-xs font-bold transition-all rounded-r-md border-t border-r border-b ${language === 'ko' ? 'bg-orange-500 text-white border-orange-500' : 'bg-black/50 text-gray-400 border-gray-600 hover:text-white'}`}
+                                >
+                                    KO
+                                </button>
+                            </div>
+                        </div>
                         <h1 className="text-5xl md:text-7xl font-display text-white tracking-tighter leading-none drop-shadow-lg mb-2">
                             {APP_NAME.split(' ')[0]}<br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
@@ -123,20 +155,40 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                         )}
                         {players.map((player, idx) => (
                             <div key={player.id} className="flex items-center justify-between bg-black/40 p-3 rounded-xl border border-white/5 group hover:border-white/20 transition-all">
-                                <div className="flex items-center gap-3">
-                                    <div className={`w-10 h-10 rounded-lg ${player.color} shadow-lg flex items-center justify-center font-display text-lg text-white`}>
+                                <div className="flex items-center gap-3 flex-1">
+                                    <div className={`w-10 h-10 rounded-lg ${player.color} shadow-lg flex items-center justify-center font-display text-lg text-white flex-shrink-0`}>
                                         {idx + 1}
                                     </div>
-                                    <div>
-                                        <div className="font-bold text-white text-sm">{player.name}</div>
-                                        <div className={`text-xs font-mono ${idx >= ROLE_DEFINITIONS.length ? 'text-amber-500' : 'text-gray-500'}`}>
-                                            {idx >= ROLE_DEFINITIONS.length ? 'BENCH/STAFF' : 'STARTING XI'}
-                                        </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-bold text-white text-sm truncate">{player.name}</div>
+                                        {idx >= ROLE_DEFINITIONS.length ? (
+                                            <select
+                                                value={player.customRole || EXTRA_ROLE_DEFINITIONS[0]?.shortName}
+                                                onChange={(e) => handleRoleChange(player.id, e.target.value)}
+                                                className="mt-1 w-full bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-mono rounded px-2 py-1 focus:outline-none focus:border-amber-400 cursor-pointer"
+                                            >
+                                                {EXTRA_ROLE_DEFINITIONS.map(role => (
+                                                    <option key={role.shortName} value={role.shortName} className="bg-gray-900 text-white">
+                                                        {role.shortName} - {role.fullName}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        ) : (
+                                            <div className="text-xs font-mono text-gray-500">STARTING XI</div>
+                                        )}
+                                        {/* Custom Mission Input */}
+                                        <input
+                                            type="text"
+                                            placeholder="Mission (optional)"
+                                            value={player.customMission || ''}
+                                            onChange={(e) => handleMissionChange(player.id, e.target.value)}
+                                            className="mt-1 w-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs rounded px-2 py-1 focus:outline-none focus:border-purple-400 placeholder-purple-400/50"
+                                        />
                                     </div>
                                 </div>
                                 <button
                                     onClick={() => removePlayer(player.id)}
-                                    className="p-2 text-gray-500 hover:text-red-400 hover:bg-white/5 rounded-full transition"
+                                    className="p-2 text-gray-500 hover:text-red-400 hover:bg-white/5 rounded-full transition ml-2 flex-shrink-0"
                                 >
                                     <Trash2 size={16} />
                                 </button>

@@ -5,6 +5,8 @@ export interface Player {
   shortRole?: string;
   number: number;
   color: string;
+  customRole?: string; // For extra players to choose their role
+  customMission?: string; // For custom mission text
 }
 
 export interface SoundEffect {

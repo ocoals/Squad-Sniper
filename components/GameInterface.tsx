@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Player } from '../types';
 import { Jersey } from './Jersey';
-import { Volume2, VolumeX, ArrowLeft, Target, Gamepad2, Crosshair, Timer, AlertTriangle, Trophy, CheckCircle } from 'lucide-react';
-import { SHOT_CLOCK_SECONDS, APP_NAME, generateRolesForPlayerCount } from '../constants';
+import { Volume2, VolumeX, ArrowLeft, Target, Gamepad2, Crosshair, Timer, AlertTriangle, Trophy, CheckCircle, Zap, Globe, BookOpen, X } from 'lucide-react';
+import { SHOT_CLOCK_SECONDS, APP_NAME, generateRolesForPlayerCount, ROLE_MISSIONS, COLORS, Language, TRANSLATIONS } from '../constants';
 import { playBeep, shuffleArray } from '../utils/audio';
 
 interface GameInterfaceProps {
   players: Player[];
   onBack: () => void;
+  language: Language;
+  onLanguageChange: (lang: Language) => void;
 }
 
 interface TargetState {
@@ -36,9 +38,19 @@ const SCOPE_SPEED_PRECISION = 0.45;
 const TARGET_SPEED_MIN = 0.08;
 const TARGET_SPEED_MAX = 0.18;
 
-export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack }) => {
-  // Generate roles dynamically based on player count
-  const initialRoles = useMemo(() => generateRolesForPlayerCount(players.length), [players.length]);
+export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, language, onLanguageChange }) => {
+  // Generate roles dynamically based on player count and custom roles
+  const initialRoles = useMemo(() => generateRolesForPlayerCount(players.length, players), [players]);
+
+  // Randomize jersey colors so position can't be guessed
+  const shuffledColors = useMemo(() => shuffleArray([...COLORS]), []);
+
+  // Tutorial state
+  const [showTutorial, setShowTutorial] = useState(true);
+  const t = TRANSLATIONS[language];
+
+  // Korean font class
+  const fontClass = language === 'ko' ? "font-['Noto_Sans_KR']" : 'font-sans';
 
   // Game state
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
@@ -86,24 +98,28 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack })
     setTargetStates(initialStates);
   }, [availableRoles.length]);
 
-  // Check for auto-finish (1 role left = auto assign)
+  // Check for auto-finish (1 role left = auto assign to all remaining players)
   useEffect(() => {
-    if (availableRoles.length === 1 && remainingPlayers === 1 && !currentResult && !isComplete) {
-      // Auto-assign last role to last player
+    if (availableRoles.length === 1 && remainingPlayers >= 1 && !currentResult && !isComplete) {
+      // Auto-assign last role to all remaining players
       const lastRole = availableRoles[0];
-      const lastPlayer = players[currentPlayerIndex];
+      const remainingPlayersList = players.slice(currentPlayerIndex);
 
-      const assignment: AssignedPlayer = { player: lastPlayer, role: lastRole };
-      setAssignedPlayers(prev => [...prev, assignment]);
+      const newAssignments: AssignedPlayer[] = remainingPlayersList.map(p => ({
+        player: p,
+        role: lastRole
+      }));
+
+      setAssignedPlayers(prev => [...prev, ...newAssignments]);
       setAvailableRoles([]);
       setIsComplete(true);
       if (soundEnabled) playBeep('hit');
     }
   }, [availableRoles, remainingPlayers, currentResult, isComplete, currentPlayerIndex, players, soundEnabled]);
 
-  // Timer countdown
+  // Timer countdown - paused during tutorial
   useEffect(() => {
-    if (currentResult || isShooting || isComplete) return;
+    if (currentResult || isShooting || isComplete || showTutorial) return;
 
     timerRef.current = setInterval(() => {
       setTimeLeft(prev => {
@@ -125,7 +141,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack })
     }, 100);
 
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [currentResult, isShooting, isComplete, soundEnabled]);
+  }, [currentResult, isShooting, isComplete, soundEnabled, showTutorial]);
 
   // Keyboard handlers
   useEffect(() => {
@@ -204,31 +220,39 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack })
     return -1;
   }, []);
 
-  // Random shot (timeout)
+  // Random shot (timeout) - still assigns the player's predetermined role
   const handleRandomShot = useCallback(() => {
     if (isShooting || availableRoles.length === 0) return;
     setIsShooting(true);
     if (soundEnabled) playBeep('shoot');
 
     setTimeout(() => {
-      // Pick random role from remaining
-      const randomIdx = Math.floor(Math.random() * availableRoles.length);
-      const selectedRole = availableRoles[randomIdx];
+      // Assign the player's predetermined role (same as normal shot)
+      const playerRole = initialRoles[currentPlayerIndex];
 
-      const assignment: AssignedPlayer = { player: currentPlayer, role: selectedRole };
+      const assignment: AssignedPlayer = { player: currentPlayer, role: playerRole };
       setCurrentResult(assignment);
       setAssignedPlayers(prev => [...prev, assignment]);
-      setAvailableRoles(prev => prev.filter((_, i) => i !== randomIdx));
+      setAvailableRoles(prev => prev.filter(r => r.shortName !== playerRole.shortName));
 
       if (soundEnabled) playBeep('hit');
       setShowFlash(true);
       setTimeout(() => setShowFlash(false), 150);
     }, 300);
-  }, [isShooting, availableRoles, currentPlayer, soundEnabled]);
+  }, [isShooting, availableRoles, currentPlayer, currentPlayerIndex, initialRoles, soundEnabled]);
 
-  // Normal shot
+  // Normal shot - ONLY works when targeting a jersey
   const handleShoot = useCallback(() => {
     if (isShooting || availableRoles.length === 0) return;
+
+    // Check if we're actually targeting a jersey
+    const hitIdx = getHitRoleIndex();
+    if (hitIdx < 0 || hitIdx >= availableRoles.length) {
+      // Not targeting any jersey - play miss sound and do nothing
+      if (soundEnabled) playBeep('miss');
+      return;
+    }
+
     setIsShooting(true);
     if (soundEnabled) playBeep('shoot');
 
@@ -243,31 +267,22 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack })
     }
 
     setTimeout(() => {
-      const hitIdx = getHitRoleIndex();
-      let selectedRole: RoleDefinition;
-      let roleIdx: number;
+      // Assign the player's predetermined role based on their index (not the jersey they shot)
+      const playerRole = initialRoles[currentPlayerIndex];
 
-      if (hitIdx >= 0 && hitIdx < availableRoles.length) {
-        // Direct hit
-        roleIdx = hitIdx;
-        selectedRole = availableRoles[hitIdx];
-      } else {
-        // Miss = random assignment
-        roleIdx = Math.floor(Math.random() * availableRoles.length);
-        selectedRole = availableRoles[roleIdx];
-      }
-
-      const assignment: AssignedPlayer = { player: currentPlayer, role: selectedRole };
+      const assignment: AssignedPlayer = { player: currentPlayer, role: playerRole };
       setCurrentResult(assignment);
       setAssignedPlayers(prev => [...prev, assignment]);
-      setAvailableRoles(prev => prev.filter((_, i) => i !== roleIdx));
+
+      // Remove the role we just assigned from available (for display purposes)
+      setAvailableRoles(prev => prev.filter(r => r.shortName !== playerRole.shortName));
 
       if (soundEnabled) playBeep('hit');
       setShowFlash(true);
       setTimeout(() => setShowFlash(false), 100);
       setBallState(prev => ({ ...prev, visible: false }));
     }, 400);
-  }, [isShooting, getHitRoleIndex, availableRoles, currentPlayer, soundEnabled]);
+  }, [isShooting, getHitRoleIndex, availableRoles, currentPlayer, currentPlayerIndex, initialRoles, soundEnabled]);
 
   // Next player
   const handleNextPlayer = () => {
@@ -298,20 +313,25 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack })
       <div className="relative w-full h-screen overflow-hidden font-sans select-none bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
         <div className="text-center">
           <Trophy className="w-24 h-24 text-yellow-400 mx-auto mb-6 animate-bounce" />
-          <h1 className="text-4xl md:text-6xl font-display text-white mb-4">SQUAD COMPLETE!</h1>
-          <p className="text-gray-400 mb-8">{assignedPlayers.length} roles assigned</p>
+          <h1 className="text-4xl md:text-6xl font-display text-white mb-4">{t.squadComplete}</h1>
+          <p className="text-gray-400 mb-8">{assignedPlayers.length} {t.rolesAssigned}</p>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8 px-4">
             {assignedPlayers.map((ap, i) => (
               <div key={i} className={`${ap.role.color} p-4 rounded-xl text-white text-center`}>
                 <div className="text-2xl font-display">{ap.role.shortName}</div>
                 <div className="text-sm opacity-80">{ap.player.name}</div>
+                {(ap.player.customMission || ROLE_MISSIONS[ap.role.shortName]) && (
+                  <div className="text-xs mt-2 opacity-70">
+                    {ap.player.customMission || ROLE_MISSIONS[ap.role.shortName]?.[language] || ''}
+                  </div>
+                )}
               </div>
             ))}
           </div>
 
           <button onClick={onBack} className="px-10 py-4 bg-neon-blue text-black font-bold text-lg uppercase rounded-full hover:bg-white transition-all">
-            🏠 Back to Setup
+            {t.backToSetup}
           </button>
         </div>
       </div>
@@ -353,20 +373,89 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack })
         )}
 
         <div className="flex gap-2 pointer-events-auto">
+          <button onClick={() => setShowTutorial(true)} className="w-9 h-9 flex items-center justify-center bg-black/40 border border-white/20 rounded-full text-white/80">
+            <BookOpen size={16} />
+          </button>
           <button onClick={() => setSoundEnabled(!soundEnabled)} className="w-9 h-9 flex items-center justify-center bg-black/40 border border-white/20 rounded-full text-white/80">
             {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
           </button>
           <button onClick={onBack} className="px-3 h-9 flex items-center gap-1 bg-red-600/80 rounded-full text-white text-xs font-bold uppercase">
-            <ArrowLeft size={12} /> Exit
+            <ArrowLeft size={12} /> {t.exit}
           </button>
         </div>
       </div>
 
-      {/* Panic Toast */}
-      {isPanicFire && (
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 z-[90] animate-bounce">
-          <div className="bg-red-600 text-white px-6 py-3 rounded-full font-display text-lg flex items-center gap-2">
-            <AlertTriangle size={20} /> RANDOM ASSIGNMENT!
+      {/* Tutorial Modal - SQUAD SNIPER Brand */}
+      {showTutorial && (
+        <div className="absolute inset-0 z-[200] flex items-center justify-center">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/95" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(239,68,68,0.15),transparent_70%)]" />
+
+          {/* Modal Container */}
+          <div className="relative w-full max-w-md mx-6">
+            {/* Red glow effect */}
+            <div className="absolute -inset-1 bg-gradient-to-b from-orange-500/30 via-red-500/20 to-transparent rounded-2xl blur-xl" />
+
+            <div className="relative bg-gray-900/95 rounded-2xl border border-white/10 overflow-hidden">
+              {/* Header Section */}
+              <div className="relative px-8 pt-8 pb-6 border-b border-white/10">
+
+                {/* Brand Logo Style Title */}
+                <div className="flex flex-col items-start">
+                  <h1 className="font-display text-4xl tracking-tight">
+                    <span className="text-white">SQUAD</span>
+                  </h1>
+                  <h1 className="font-display text-4xl tracking-tight -mt-1">
+                    <span className="text-orange-500">SNIPER</span>
+                  </h1>
+                </div>
+              </div>
+
+              {/* Instructions Section */}
+              <div className={`px-8 py-6 ${language === 'ko' ? "font-['Noto_Sans_KR']" : 'font-sans'}`}>
+                <div className="space-y-4">
+                  {[
+                    { icon: '🎮', text: t.tutorial.step1 },
+                    { icon: '🎯', text: t.tutorial.step2 },
+                    { icon: '⏱️', text: t.tutorial.step3 },
+                    { icon: '❌', text: t.tutorial.step4 },
+                    { icon: '⚡', text: t.tutorial.step5 },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center gap-4">
+                      <span className="text-xl w-8 text-center flex-shrink-0">{item.icon}</span>
+                      <p className="text-white/90 text-base leading-relaxed">{item.text}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Tip */}
+                <div className="mt-6 px-4 py-3 bg-orange-500/10 border-l-2 border-orange-500 rounded-r-lg">
+                  <p className="text-orange-200/90 text-sm">
+                    {t.tutorial.tip}
+                  </p>
+                </div>
+              </div>
+
+              {/* CTA Button */}
+              <div className="px-8 pb-8">
+                <button
+                  onClick={() => setShowTutorial(false)}
+                  className="w-full py-4 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white font-bold text-lg uppercase rounded-xl transition-all shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40"
+                >
+                  {t.tutorial.start}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Random Assignment Toast */}
+      {isPanicFire && currentResult && (
+        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-[90]">
+          <div className="bg-gradient-to-r from-red-600 to-red-500 text-white px-6 py-3 rounded-xl font-bold text-base flex items-center gap-3 shadow-xl shadow-red-500/30">
+            <AlertTriangle size={22} /> {t.randomAssignment}
           </div>
         </div>
       )}
@@ -381,7 +470,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack })
               <div key={role.shortName} ref={el => { jerseyRefs.current[idx] = el; }} className="absolute transition-transform duration-100"
                 style={{ top: `${state.y}%`, left: `${state.x}%`, transform: 'translate(-50%, -50%)' }}>
                 <Jersey
-                  player={{ id: role.shortName, name: '???', role: '', number: 0, color: role.color }}
+                  player={{ id: role.shortName, name: '???', role: '', number: 0, color: shuffledColors[idx % shuffledColors.length] }}
                   isHit={false}
                   isFocused={currentTargetIdx === idx}
                   showDebugHitbox={DEBUG_HITBOX}
@@ -446,7 +535,21 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack })
               }`} style={{ textShadow: '0 0 60px currentColor' }}>
               {currentResult.role.shortName}
             </div>
-            <div className="text-xl text-gray-300 mb-6">{currentResult.role.fullName}</div>
+            <div className="text-xl text-gray-300 mb-4">{currentResult.role.fullName}</div>
+
+            {/* Mission Display - Premium */}
+            {(currentResult.player.customMission || ROLE_MISSIONS[currentResult.role.shortName]) && (
+              <div className="mb-6 px-8 py-5 bg-gray-800/80 border border-white/10 rounded-2xl backdrop-blur-sm">
+                <div className="text-orange-400 text-xs font-mono tracking-[0.2em] uppercase mb-3 flex items-center gap-2 justify-center">
+                  <Zap size={14} /> {t.mission}
+                </div>
+                <div className={`text-white text-xl font-bold ${language === 'ko' ? "font-['Noto_Sans_KR']" : ''}`}>
+                  {currentResult.player.customMission ||
+                    (ROLE_MISSIONS[currentResult.role.shortName]?.[language]?.replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim() || '')}
+                </div>
+              </div>
+            )}
+
             <div className="w-24 h-[1px] bg-gray-600 mb-4"></div>
             <div className="text-gray-500 text-sm">Assigned to</div>
             <div className="text-white text-2xl font-bold flex items-center gap-2 mt-1">
@@ -454,8 +557,8 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack })
               {currentResult.player.name}
             </div>
 
-            <button onClick={handleNextPlayer} className="mt-8 px-10 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold text-lg uppercase rounded-full hover:scale-105 transition-all">
-              {remainingPlayers <= 1 ? '🏆 Finish Draft' : '➡️ Next Player'}
+            <button onClick={handleNextPlayer} className="mt-8 px-10 py-4 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white font-bold text-lg uppercase rounded-xl transition-all shadow-lg">
+              {remainingPlayers <= 1 ? 'Finish Draft' : 'Next Player'}
             </button>
           </div>
         </div>

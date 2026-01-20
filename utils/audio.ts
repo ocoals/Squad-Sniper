@@ -10,7 +10,7 @@ const getAudioContext = (): AudioContext => {
     return audioContext;
 };
 
-export type SoundType = 'move' | 'shoot' | 'hit' | 'tick' | 'locked' | 'timeup';
+export type SoundType = 'move' | 'shoot' | 'hit' | 'tick' | 'locked' | 'timeup' | 'miss';
 
 export const playBeep = (type: SoundType): void => {
     try {
@@ -105,6 +105,17 @@ export const playBeep = (type: SoundType): void => {
                 gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
                 oscillator.start(now);
                 oscillator.stop(now + 0.5);
+                break;
+
+            case 'miss':
+                // Error/miss buzzer sound
+                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(200, now);
+                oscillator.frequency.setValueAtTime(150, now + 0.1);
+                gainNode.gain.setValueAtTime(0.15, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                oscillator.start(now);
+                oscillator.stop(now + 0.15);
                 break;
         }
     } catch (e) {
