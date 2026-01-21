@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { GameInterface } from './components/GameInterface';
 import { SetupScreen } from './components/SetupScreen';
+import { GoogleAnalytics } from './components/GoogleAnalytics';
 import { Player } from './types';
 import { INITIAL_PLAYERS, Language } from './constants';
 
@@ -11,6 +12,7 @@ const App: React.FC = () => {
 
   return (
     <div className="w-full h-screen overflow-hidden">
+      <GoogleAnalytics />
       {mode === 'setup' ? (
         <SetupScreen
           players={players}
