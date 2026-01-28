@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Player } from '../types';
-import { Play, Plus, Trash2, Users, Target, UserPlus, Globe, ChevronDown } from 'lucide-react';
+import { Play, Plus, Trash2, Users, Target, UserPlus, Globe, ChevronDown, Crosshair, Trophy } from 'lucide-react';
 import { COLORS, APP_NAME, ROLE_DEFINITIONS, EXTRA_ROLE_DEFINITIONS, Language } from '../constants';
 
 interface SetupScreenProps {
@@ -56,12 +56,13 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
     const isExtraPlayers = players.length > ROLE_DEFINITIONS.length;
 
     return (
-        <div className="min-h-screen relative flex items-center justify-center p-4 overflow-hidden stadium-bg">
+        <div className="min-h-screen relative flex flex-col items-center p-4 stadium-bg overflow-x-hidden">
             {/* Background Overlay */}
             <div className="absolute inset-0 bg-black/70 z-0"></div>
             <div className="absolute inset-0 bg-gradient-to-b from-red-900/20 via-transparent to-black/80 z-0"></div>
 
-            <div className="max-w-4xl w-full z-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Main Content Area */}
+            <div className="max-w-4xl w-full z-10 grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 md:mt-20">
 
                 {/* Left Column: Title & Info */}
                 <div className="flex flex-col justify-center text-left space-y-4">
@@ -236,6 +237,74 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                     </button>
 
                 </div>
+            </div>
+
+            {/* Extra Content Section for AdSense Compliance */}
+            <div className="max-w-4xl w-full z-10 mt-24 mb-12 space-y-16">
+
+                {/* How it works */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                    <div className="space-y-3">
+                        <div className="w-12 h-12 bg-red-500/20 rounded-2xl flex items-center justify-center mx-auto md:mx-0">
+                            <Users className="text-red-400" size={24} />
+                        </div>
+                        <h4 className="text-white font-bold text-lg">Build Your Squad</h4>
+                        <p className="text-gray-400 text-sm leading-relaxed">Add all your team members, from starting strikers to managers. Support for unlimited players ensures no one is left out of the fun.</p>
+                    </div>
+                    <div className="space-y-3 border-t md:border-t-0 md:border-l border-white/10 pt-8 md:pt-0 md:pl-8">
+                        <div className="w-12 h-12 bg-orange-500/20 rounded-2xl flex items-center justify-center mx-auto md:mx-0">
+                            <Crosshair className="text-orange-400" size={24} />
+                        </div>
+                        <h4 className="text-white font-bold text-lg">Thrilling Shootout</h4>
+                        <p className="text-gray-400 text-sm leading-relaxed">Interactive skill-based selection. Move the scope with WASD/Arrows, focus with Shift, and take the shot to assign a random role.</p>
+                    </div>
+                    <div className="space-y-3 border-t md:border-t-0 md:border-l border-white/10 pt-8 md:pt-0 md:pl-8">
+                        <div className="w-12 h-12 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto md:mx-0">
+                            <Trophy className="text-purple-400" size={24} />
+                        </div>
+                        <h4 className="text-white font-bold text-lg">Professional Missions</h4>
+                        <p className="text-gray-400 text-sm leading-relaxed">Each position comes with specialized missions like 'Keep a clean sheet' or 'Score a solo goal' to make the match more competitive.</p>
+                    </div>
+                </div>
+
+                {/* FAQ / Detailed Info */}
+                <div className="bg-white/5 rounded-3xl p-8 md:p-12 border border-white/10">
+                    <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                        <Globe size={24} className="text-red-500" />
+                        Frequently Asked Questions
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                        <div className="space-y-2">
+                            <h5 className="text-red-400 font-bold">What is SQUAD SNIPER?</h5>
+                            <p className="text-gray-400 text-sm">SQUAD SNIPER is a professional-grade football squad drafting utility. It automates the process of team role assignments using a skill-based mini-game, making pre-match preparations exciting and fair.</p>
+                        </div>
+                        <div className="space-y-2">
+                            <h5 className="text-red-400 font-bold">Is it free to use?</h5>
+                            <p className="text-gray-400 text-sm">Yes, SQUAD SNIPER is completely free for all amateur and professional football enthusiasts. We provide premium drafting features without any subscription barrier.</p>
+                        </div>
+                        <div className="space-y-2 border-t border-white/10 pt-6">
+                            <h5 className="text-red-400 font-bold">How many players are supported?</h5>
+                            <p className="text-gray-400 text-sm">We support an unlimited number of participants. The tool dynamically generates additional roles (Substitutes, Reserves, Staff) once the core 12 positions are filled.</p>
+                        </div>
+                        <div className="space-y-2 border-t border-white/10 pt-6">
+                            <h5 className="text-red-400 font-bold">Can I use this for social matches?</h5>
+                            <p className="text-gray-400 text-sm">Absolutely! SQUAD SNIPER is perfect for social futsal matches, amateur football leagues, or even just casual gaming groups looking for fair role distribution.</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Simple Footer */}
+                <footer className="pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 opacity-60">
+                    <div className="text-sm text-gray-400">
+                        © 2026 SQUAD SNIPER. All rights reserved.
+                    </div>
+                    <div className="flex gap-8 text-xs font-bold tracking-widest uppercase">
+                        <a href="/privacy.html" className="hover:text-red-500 transition-colors">Privacy Policy</a>
+                        <a href="/terms.html" className="hover:text-red-500 transition-colors">Terms of Service</a>
+                        <a href="mailto:support@squadsniper.com" className="hover:text-red-500 transition-colors">Contact Support</a>
+                    </div>
+                </footer>
+
             </div>
         </div>
     );
