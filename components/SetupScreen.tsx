@@ -56,11 +56,8 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
     const isExtraPlayers = players.length > ROLE_DEFINITIONS.length;
 
     return (
-        <div className="min-h-screen w-full flex flex-col items-center p-4 stadium-bg pb-32 relative z-10">
-            {/* Background Overlay */}
-            <div className="absolute inset-0 bg-black/70 z-0"></div>
-            <div className="absolute inset-0 bg-gradient-to-b from-red-900/20 via-transparent to-black/80 z-0"></div>
-
+        <div className="w-full flex flex-col items-center p-4 pb-32 relative z-10">
+            <div className="stadium-bg-overlay"></div>
             {/* Main Content Area */}
             <div className="max-w-4xl w-full z-10 grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 md:mt-20">
 

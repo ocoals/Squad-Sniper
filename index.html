@@ -86,8 +86,6 @@
   <style>
     html {
       height: auto;
-      overflow-y: scroll;
-      /* Force scrollbar track */
       scroll-behavior: smooth;
     }
 
@@ -99,7 +97,11 @@
       color: white;
       font-family: 'Inter', sans-serif;
       overflow-x: hidden;
-      position: relative;
+      overflow-y: auto;
+      background-image: url('https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?q=80&w=2560&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center bottom;
+      background-attachment: fixed;
     }
 
     #root {
@@ -148,11 +150,12 @@
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     }
 
-    .stadium-bg {
-      background-image: url('https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?q=80&w=2560&auto=format&fit=crop');
-      background-size: cover;
-      background-position: center bottom;
-      /* Removed fixed attachment as it causes bugs on many mobile devices */
+    .stadium-bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.8) 100%);
+      pointer-events: none;
+      z-index: -1;
     }
   </style>
   <script type="importmap">
