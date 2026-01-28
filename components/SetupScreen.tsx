@@ -293,8 +293,9 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
 
                 {/* Simple Footer */}
                 <footer className="pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 opacity-60">
-                    <div className="text-sm text-gray-400">
-                        © 2026 {APP_NAME}. All rights reserved.
+                    <div className="flex flex-col gap-2 text-sm text-gray-400">
+                        <div>© 2026 {APP_NAME}. All rights reserved.</div>
+                        <div className="text-xs text-gray-500">Last Updated: 2026년 1월</div>
                     </div>
                     <div className="flex gap-8 text-xs font-bold tracking-widest uppercase">
                         <a href="/privacy.html" className="hover:text-red-500 transition-colors">{t.setup.privacyPolicy}</a>

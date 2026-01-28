@@ -10,9 +10,9 @@
     <xhtml:link rel="alternate" hreflang="ko" href="https://squad-sniper.vercel.app/?lang=ko" />
     <xhtml:link rel="alternate" hreflang="en" href="https://squad-sniper.vercel.app/?lang=en" />
     <image:image>
-      <image:loc>https://squad-sniper.vercel.app/Logo.png</image:loc>
+      <image:loc>https://squad-sniper.vercel.app/Logo.webp</image:loc>
       <image:title>SQUAD SNIPER Logo</image:title>
-      <image:caption>SQUAD SNIPER - Ultimate Football Squad Draft Tool</image:caption>
+      <image:caption>SQUAD SNIPER - 축구 포지션 배정 게임 | 공정한 드래프트 도구</image:caption>
     </image:image>
   </url>
   <url>

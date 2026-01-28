@@ -7,18 +7,18 @@ import { INITIAL_PLAYERS, Language } from './constants';
 // 언어별 메타 데이터
 const META_DATA = {
   ko: {
-    title: 'SQUAD SNIPER | 궁극의 축구 스쿼드 드래프트 도구',
-    description: 'SQUAD SNIPER - 프로페셔널 축구 스쿼드 드래프트 & 팀 배정 도구. 리얼리스틱 3D 스타디움 환경에서 페널티킥 드래프트 모드로 축구 포지션을 배정하세요.',
-    keywords: '축구 드래프트, 축구 팀 배정, 스쿼드 빌더, 페널티킥 게임, 팀 랜더마이저, 축구 포지션 드래프트, 축구 팀 빌더, 스쿼드 스나이퍼',
-    ogTitle: 'SQUAD SNIPER - 궁극의 축구 드래프트 도구',
-    ogDescription: '스릴 넘치는 슈팅 드래프트 모드로 축구 포지션을 배정하세요. 아마추어 팀과 소셜 매치에 완벽합니다.'
+    title: 'SQUAD SNIPER | 축구 포지션 배정 게임 - 공정한 드래프트 도구',
+    description: '축구 동호회나 풋살 팀의 포지션을 공정하게 정하는 무료 도구. 페널티킥 슈팅 게임으로 GK, ST, CM 등 역할을 재미있게 배정하세요. 인원 제한 없음, 모바일/PC 지원. 2026년 최신 3D 스타디움 환경.',
+    keywords: '축구 포지션 배정, 축구 드래프트, 팀 역할 정하기, 공정한 포지션 선정, 페널티킥 게임, 축구 동호회, 풋살 팀, soccer draft, football team assignment, squad builder, penalty shootout game, team randomizer, squad sniper',
+    ogTitle: 'SQUAD SNIPER - 축구 포지션 배정 게임 | 공정한 드래프트 도구',
+    ogDescription: '축구 동호회나 풋살 팀의 포지션을 페널티킥 슈팅으로 공정하게 배정하세요. 무료, 인원 제한 없음, 2026년 최신 3D 스타디움 환경. GK부터 ST까지 재미있게 역할 정하기!'
   },
   en: {
-    title: 'SQUAD SNIPER | Ultimate Football Squad Draft Tool',
-    description: 'SQUAD SNIPER - Professional Football Squad Draft & Team Assignment Tool. Assign soccer roles by shooting targets in a realistic 3D stadium environment with penalty shootout draft mode.',
-    keywords: 'soccer draft, football team assignment, squad builder, penalty shootout game, team randomizer, football position draft, soccer team builder, squad sniper',
-    ogTitle: 'SQUAD SNIPER - Ultimate Football Draft Tool',
-    ogDescription: 'Assign soccer positions with a thrilling shootout draft mode. Perfect for amateur teams and social matches in a realistic 3D stadium environment.'
+    title: 'SQUAD SNIPER | Fair Football Position Draft Game - Free Tool 2026',
+    description: 'Free tool to fairly assign soccer positions for amateur teams and futsal clubs. Use penalty shootout game to assign GK, ST, CM roles. Unlimited players, mobile/PC support. Latest 3D stadium in 2026.',
+    keywords: 'soccer position assignment, football draft, fair team roles, penalty shootout game, amateur soccer, futsal team, squad builder, team randomizer, squad sniper 2026',
+    ogTitle: 'SQUAD SNIPER - Fair Football Position Draft Game',
+    ogDescription: 'Assign soccer positions fairly for amateur teams with penalty shootout. Free, unlimited players, 2026 latest 3D stadium. Fun way to determine GK to ST roles!'
   }
 };
 
