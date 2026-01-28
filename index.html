@@ -85,22 +85,21 @@
     rel="stylesheet">
   <style>
     html {
-      overflow-x: hidden;
-      overflow-y: auto;
+      height: 100%;
     }
 
     body {
       margin: 0;
       padding: 0;
-      min-height: 100vh;
+      min-height: 100%;
       background-color: #02040a;
       color: white;
       font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
     }
 
     #root {
-      width: 100%;
-      position: relative;
+      min-height: 100%;
     }
 
     .perspective-container {
@@ -146,7 +145,7 @@
       background-image: url('https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?q=80&w=2560&auto=format&fit=crop');
       background-size: cover;
       background-position: center bottom;
-      background-attachment: fixed;
+      /* Removed fixed attachment as it causes bugs on many mobile devices */
     }
   </style>
   <script type="importmap">
