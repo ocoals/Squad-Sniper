@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Player } from '../types';
 import { Play, Plus, Trash2, Users, Target, UserPlus, Globe, ChevronDown, Crosshair, Trophy } from 'lucide-react';
-import { COLORS, APP_NAME, ROLE_DEFINITIONS, EXTRA_ROLE_DEFINITIONS, Language } from '../constants';
+import { COLORS, APP_NAME, ROLE_DEFINITIONS, EXTRA_ROLE_DEFINITIONS, Language, TRANSLATIONS } from '../constants';
 
 interface SetupScreenProps {
     players: Player[];
@@ -13,6 +13,7 @@ interface SetupScreenProps {
 
 export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChange, onStart, language, onLanguageChange }) => {
     const [newName, setNewName] = useState('');
+    const t = TRANSLATIONS[language];
 
     const handleAddPlayer = () => {
         if (!newName.trim()) return;
@@ -66,7 +67,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                     <div>
                         <div className="flex items-center gap-4 mb-2">
                             <span className="inline-block px-3 py-1 bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-mono rounded tracking-widest">
-                                🎯 DRAFT MODE
+                                {t.setup.subtitle}
                             </span>
                             {/* Language Toggle - Near Title */}
                             <div className="flex">
@@ -91,7 +92,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                             </span>
                         </h1>
                         <p className="text-gray-400 max-w-sm border-l-2 border-red-500 pl-4 text-sm">
-                            Assign roles by shooting targets. Each shot eliminates one role. Add unlimited players!
+                            {t.setup.description}
                         </p>
                     </div>
 
@@ -110,13 +111,13 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                                 )}
                             </div>
                             <div className="text-xs text-gray-400 font-mono">
-                                {players.length} PLAYERS LOADED
+                                {players.length} {t.setup.playersLoaded}
                             </div>
                         </div>
                         {isExtraPlayers && (
                             <div className="text-xs text-amber-400 font-mono flex items-center gap-1">
                                 <UserPlus size={12} />
-                                {players.length - ROLE_DEFINITIONS.length} bench/staff roles will be added
+                                {players.length - ROLE_DEFINITIONS.length} {t.setup.benchNote}
                             </div>
                         )}
                     </div>
@@ -132,8 +133,8 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                                 <Target className="text-red-400" size={24} />
                             </div>
                             <div>
-                                <h3 className="font-bold text-white tracking-wide">SQUAD ROSTER</h3>
-                                <p className="text-xs text-gray-400">{players.length} players • No limit!</p>
+                                <h3 className="font-bold text-white tracking-wide">{t.setup.rosterTitle}</h3>
+                                <p className="text-xs text-gray-400">{players.length} {t.setup.playerLimit}</p>
                             </div>
                         </div>
                         {players.length > ROLE_DEFINITIONS.length && (
@@ -172,12 +173,12 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                                                 ))}
                                             </select>
                                         ) : (
-                                            <div className="text-xs font-mono text-gray-500">STARTING XI</div>
+                                            <div className="text-xs font-mono text-gray-500">{t.setup.startingXI}</div>
                                         )}
                                         {/* Custom Mission Input */}
                                         <input
                                             type="text"
-                                            placeholder="Mission (optional)"
+                                            placeholder={t.setup.missionPlaceholder}
                                             value={player.customMission || ''}
                                             onChange={(e) => handleMissionChange(player.id, e.target.value)}
                                             className="mt-1 w-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs rounded px-2 py-1 focus:outline-none focus:border-purple-400 placeholder-purple-400/50"
@@ -198,7 +199,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                     <div className="bg-black/40 p-1 rounded-2xl mb-4 border border-white/10 flex items-center">
                         <input
                             type="text"
-                            placeholder="Enter player name..."
+                            placeholder={t.setup.inputPlaceholder}
                             value={newName}
                             onChange={(e) => setNewName(e.target.value)}
                             onKeyPress={handleKeyPress}
@@ -226,8 +227,8 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                 `}
                     >
                         <span className="flex items-center justify-center gap-3">
-                            <span>🎯</span>
-                            <span>Start Draft</span>
+                            <span>{t.startDraft.split(' ')[0]}</span>
+                            <span>{t.startDraft.split(' ').slice(1).join(' ')}</span>
                             <span className="text-white/70">({players.length})</span>
                             <Play size={16} fill="currentColor" className="ml-1" />
                         </span>
@@ -245,22 +246,22 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                         <div className="w-12 h-12 bg-red-500/20 rounded-2xl flex items-center justify-center mx-auto md:mx-0">
                             <Users className="text-red-400" size={24} />
                         </div>
-                        <h4 className="text-white font-bold text-lg">Build Your Squad</h4>
-                        <p className="text-gray-400 text-sm leading-relaxed">Add all your team members, from starting strikers to managers. Support for unlimited players ensures no one is left out of the fun.</p>
+                        <h4 className="text-white font-bold text-lg">{t.setup.buildSquadTitle}</h4>
+                        <p className="text-gray-400 text-sm leading-relaxed">{t.setup.buildSquadDesc}</p>
                     </div>
                     <div className="space-y-3 border-t md:border-t-0 md:border-l border-white/10 pt-8 md:pt-0 md:pl-8">
                         <div className="w-12 h-12 bg-orange-500/20 rounded-2xl flex items-center justify-center mx-auto md:mx-0">
                             <Crosshair className="text-orange-400" size={24} />
                         </div>
-                        <h4 className="text-white font-bold text-lg">Thrilling Shootout</h4>
-                        <p className="text-gray-400 text-sm leading-relaxed">Interactive skill-based selection. Move the scope with WASD/Arrows, focus with Shift, and take the shot to assign a random role.</p>
+                        <h4 className="text-white font-bold text-lg">{t.setup.shootoutTitle}</h4>
+                        <p className="text-gray-400 text-sm leading-relaxed">{t.setup.shootoutDesc}</p>
                     </div>
                     <div className="space-y-3 border-t md:border-t-0 md:border-l border-white/10 pt-8 md:pt-0 md:pl-8">
                         <div className="w-12 h-12 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto md:mx-0">
                             <Trophy className="text-purple-400" size={24} />
                         </div>
-                        <h4 className="text-white font-bold text-lg">Professional Missions</h4>
-                        <p className="text-gray-400 text-sm leading-relaxed">Each position comes with specialized missions like 'Keep a clean sheet' or 'Score a solo goal' to make the match more competitive.</p>
+                        <h4 className="text-white font-bold text-lg">{t.setup.missionsTitle}</h4>
+                        <p className="text-gray-400 text-sm leading-relaxed">{t.setup.missionsDesc}</p>
                     </div>
                 </div>
 
@@ -268,24 +269,24 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                 <div className="bg-white/5 rounded-3xl p-8 md:p-12 border border-white/10">
                     <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
                         <Globe size={24} className="text-red-500" />
-                        Frequently Asked Questions
+                        {t.setup.faqTitle}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                         <div className="space-y-2">
-                            <h5 className="text-red-400 font-bold">What is SQUAD SNIPER?</h5>
-                            <p className="text-gray-400 text-sm">SQUAD SNIPER is a professional-grade football squad drafting utility. It automates the process of team role assignments using a skill-based mini-game, making pre-match preparations exciting and fair.</p>
+                            <h5 className="text-red-400 font-bold">{t.setup.faq1Q}</h5>
+                            <p className="text-gray-400 text-sm">{t.setup.faq1A}</p>
                         </div>
                         <div className="space-y-2">
-                            <h5 className="text-red-400 font-bold">Is it free to use?</h5>
-                            <p className="text-gray-400 text-sm">Yes, SQUAD SNIPER is completely free for all amateur and professional football enthusiasts. We provide premium drafting features without any subscription barrier.</p>
+                            <h5 className="text-red-400 font-bold">{t.setup.faq2Q}</h5>
+                            <p className="text-gray-400 text-sm">{t.setup.faq2A}</p>
                         </div>
                         <div className="space-y-2 border-t border-white/10 pt-6">
-                            <h5 className="text-red-400 font-bold">How many players are supported?</h5>
-                            <p className="text-gray-400 text-sm">We support an unlimited number of participants. The tool dynamically generates additional roles (Substitutes, Reserves, Staff) once the core 12 positions are filled.</p>
+                            <h5 className="text-red-400 font-bold">{t.setup.faq3Q}</h5>
+                            <p className="text-gray-400 text-sm">{t.setup.faq3A}</p>
                         </div>
                         <div className="space-y-2 border-t border-white/10 pt-6">
-                            <h5 className="text-red-400 font-bold">Can I use this for social matches?</h5>
-                            <p className="text-gray-400 text-sm">Absolutely! SQUAD SNIPER is perfect for social futsal matches, amateur football leagues, or even just casual gaming groups looking for fair role distribution.</p>
+                            <h5 className="text-red-400 font-bold">{t.setup.faq4Q}</h5>
+                            <p className="text-gray-400 text-sm">{t.setup.faq4A}</p>
                         </div>
                     </div>
                 </div>
@@ -293,12 +294,12 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                 {/* Simple Footer */}
                 <footer className="pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 opacity-60">
                     <div className="text-sm text-gray-400">
-                        © 2026 SQUAD SNIPER. All rights reserved.
+                        © 2026 {APP_NAME}. All rights reserved.
                     </div>
                     <div className="flex gap-8 text-xs font-bold tracking-widest uppercase">
-                        <a href="/privacy.html" className="hover:text-red-500 transition-colors">Privacy Policy</a>
-                        <a href="/terms.html" className="hover:text-red-500 transition-colors">Terms of Service</a>
-                        <a href="mailto:support@squadsniper.com" className="hover:text-red-500 transition-colors">Contact Support</a>
+                        <a href="/privacy.html" className="hover:text-red-500 transition-colors">{t.setup.privacyPolicy}</a>
+                        <a href="/terms.html" className="hover:text-red-500 transition-colors">{t.setup.termsOfService}</a>
+                        <a href={`mailto:support@squadsniper.com?subject=[${APP_NAME}] Support Request`} className="hover:text-red-500 transition-colors">{t.setup.contactSupport}</a>
                     </div>
                 </footer>
 
