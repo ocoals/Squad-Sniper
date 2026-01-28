@@ -90,6 +90,14 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
   const currentPlayer = players[shuffledIndices[currentPlayerIndex]]; // Use shuffled index
   const remainingPlayers = players.length - currentPlayerIndex;
 
+  // Lock scroll during game
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
   // Initialize target positions
   useEffect(() => {
     const initialStates: TargetState[] = availableRoles.map(() => ({
