@@ -11,7 +11,7 @@ const App: React.FC = () => {
   const [language, setLanguage] = useState<Language>('en');
 
   return (
-    <div className="w-full min-h-screen">
+    <div className="w-full min-h-screen overflow-y-auto">
       <GoogleAnalytics />
       {mode === 'setup' ? (
         <SetupScreen
