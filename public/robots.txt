@@ -1,0 +1,10 @@
+# Squad Sniper - Robots.txt
+User-agent: *
+Allow: /
+
+# 크롤링 제외 경로
+Disallow: /ads.txt
+Disallow: /google*.html
+
+# Sitemap
+Sitemap: https://squad-sniper.vercel.app/sitemap.xml

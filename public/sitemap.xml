@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://squad-sniper.vercel.app/</loc>
-    <lastmod>2026-01-28</lastmod>
+    <lastmod>2026-01-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://squad-sniper.vercel.app/?lang=ko" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://squad-sniper.vercel.app/?lang=en" />
+    <image:image>
+      <image:loc>https://squad-sniper.vercel.app/Logo.png</image:loc>
+      <image:title>SQUAD SNIPER Logo</image:title>
+      <image:caption>SQUAD SNIPER - Ultimate Football Squad Draft Tool</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://squad-sniper.vercel.app/privacy.html</loc>
-    <lastmod>2026-01-28</lastmod>
+    <lastmod>2026-01-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://squad-sniper.vercel.app/terms.html</loc>
-    <lastmod>2026-01-28</lastmod>
+    <lastmod>2026-01-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

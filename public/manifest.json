@@ -1,0 +1,35 @@
+{
+  "name": "SQUAD SNIPER - 축구 스쿼드 드래프트",
+  "short_name": "Squad Sniper",
+  "description": "사격 드래프트로 축구 포지션을 배정하는 리얼리스틱 3D 스타디움 게임",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#02040a",
+  "theme_color": "#00f3ff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["sports", "games", "entertainment"],
+  "lang": "ko-KR",
+  "dir": "ltr",
+  "scope": "/",
+  "screenshots": []
+}
