@@ -85,26 +85,28 @@
     rel="stylesheet">
   <style>
     html {
-      height: 100%;
-      margin: 0;
-      padding: 0;
+      height: auto;
+      overflow-y: scroll;
+      /* Force scrollbar track */
+      scroll-behavior: smooth;
     }
 
     body {
-      min-height: 100%;
       margin: 0;
       padding: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
+      min-height: 100vh;
       background-color: #02040a;
       color: white;
       font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      position: relative;
     }
 
     #root {
-      min-height: 100%;
-      display: flex;
-      flex-direction: column;
+      width: 100%;
+      min-height: 100vh;
+      display: block;
+      /* Standard block flow */
     }
 
     .perspective-container {
