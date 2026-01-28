@@ -11,7 +11,7 @@ const App: React.FC = () => {
   const [language, setLanguage] = useState<Language>('en');
 
   return (
-    <div className="relative w-full flex flex-col">
+    <div className="relative w-full flex-1 flex flex-col">
       <GoogleAnalytics />
       {mode === 'setup' ? (
         <SetupScreen
