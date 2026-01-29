@@ -25,3 +25,4 @@ dist-ssr
 
 .vercel
 Logo_original.png
+.env*.local
