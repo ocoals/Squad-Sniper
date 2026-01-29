@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Share2, X } from 'lucide-react';
+import React, { useState, RefObject } from 'react';
+import { Share2, X, Image as ImageIcon, Download } from 'lucide-react';
 import { Player } from '../types';
 import { Language, getTranslation } from '../constants';
 import {
@@ -11,19 +11,24 @@ import {
   copyToClipboard,
   copyLink,
   generateShareText,
+  shareAsImage,
+  downloadAsImage,
 } from '../utils/share';
 
 interface ShareButtonProps {
   assignedPlayers: Player[];
   language: Language;
+  resultElementRef?: RefObject<HTMLElement>;
 }
 
 export const ShareButton: React.FC<ShareButtonProps> = ({
   assignedPlayers,
   language,
+  resultElementRef,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isCapturing, setIsCapturing] = useState(false);
   const t = getTranslation(language).share;
 
   // 토스트 메시지 표시
@@ -77,6 +82,38 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
     const result = await shareViaInstagram(assignedPlayers, language);
     showToast(result.message);
     setShowModal(false);
+  };
+
+  // 이미지로 공유
+  const handleShareImage = async () => {
+    if (!resultElementRef?.current) {
+      showToast(language === 'ko' ? '공유할 수 없습니다.' : 'Cannot share.');
+      return;
+    }
+
+    setIsCapturing(true);
+    const result = await shareAsImage(resultElementRef.current, language);
+    setIsCapturing(false);
+    showToast(result.message);
+    if (result.success) {
+      setShowModal(false);
+    }
+  };
+
+  // 이미지 다운로드
+  const handleDownloadImage = async () => {
+    if (!resultElementRef?.current) {
+      showToast(language === 'ko' ? '다운로드할 수 없습니다.' : 'Cannot download.');
+      return;
+    }
+
+    setIsCapturing(true);
+    const result = await downloadAsImage(resultElementRef.current, language);
+    setIsCapturing(false);
+    showToast(result.message);
+    if (result.success) {
+      setShowModal(false);
+    }
   };
 
   return (
@@ -145,6 +182,28 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
                 <span className="text-sm">{t.facebook}</span>
               </button>
             </div>
+
+            {/* 이미지 공유/다운로드 */}
+            {resultElementRef && (
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <button
+                  onClick={handleShareImage}
+                  disabled={isCapturing}
+                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  <ImageIcon size={20} />
+                  <span className="text-sm">{isCapturing ? (language === 'ko' ? '처리 중...' : 'Processing...') : (t.shareImage || (language === 'ko' ? '이미지 공유' : 'Share Image'))}</span>
+                </button>
+                <button
+                  onClick={handleDownloadImage}
+                  disabled={isCapturing}
+                  className="bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  <Download size={20} />
+                  <span className="text-sm">{isCapturing ? (language === 'ko' ? '처리 중...' : 'Processing...') : (t.downloadImage || (language === 'ko' ? '이미지 저장' : 'Save Image'))}</span>
+                </button>
+              </div>
+            )}
 
             {/* 텍스트/링크 복사 */}
             <div className="grid grid-cols-2 gap-3 mb-4">

@@ -87,6 +87,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
   const animationRef = useRef<number>();
   const timerRef = useRef<NodeJS.Timeout>();
   const lastTickRef = useRef<number>(SHOT_CLOCK_SECONDS);
+  const resultScreenRef = useRef<HTMLDivElement>(null);
 
   const currentPlayer = players[shuffledIndices[currentPlayerIndex]]; // Use shuffled index
   const remainingPlayers = players.length - currentPlayerIndex;
@@ -355,7 +356,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
   if (isComplete) {
     return (
       <div className="relative w-full h-screen overflow-hidden font-sans select-none bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
-        <div className="text-center">
+        <div ref={resultScreenRef} className="text-center">
           <Trophy className="w-24 h-24 text-yellow-400 mx-auto mb-6 animate-bounce" />
           <h1 className="text-4xl md:text-6xl font-display text-white mb-4">{t.squadComplete}</h1>
           <p className="text-gray-400 mb-8">{assignedPlayers.length} {t.rolesAssigned}</p>
@@ -382,6 +383,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
                 shortRole: ap.role.shortName,
               }))}
               language={language}
+              resultElementRef={resultScreenRef}
             />
           </div>
 

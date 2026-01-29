@@ -1,5 +1,6 @@
 import { Player } from '../types';
 import { Language, ROLE_MISSIONS } from '../constants';
+import html2canvas from 'html2canvas';
 
 /**
  * Web Share API 지원 여부 확인
@@ -181,4 +182,136 @@ export const copyToClipboard = async (text: string): Promise<boolean> => {
  */
 export const copyLink = async (): Promise<boolean> => {
   return copyToClipboard('https://squad-sniper.vercel.app');
+};
+
+/**
+ * DOM 요소를 이미지로 캡처
+ * @param element 캡처할 DOM 요소
+ * @param language 언어 (워터마크용)
+ */
+export const captureElementAsImage = async (
+  element: HTMLElement,
+  language: Language
+): Promise<Blob | null> => {
+  try {
+    // html2canvas로 DOM을 캔버스로 변환
+    const canvas = await html2canvas(element, {
+      backgroundColor: '#000000',
+      scale: 2, // 고해상도
+      logging: false,
+      useCORS: true,
+    });
+
+    // 워터마크 추가
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      const watermarkText = 'squad-sniper.vercel.app';
+      const fontSize = Math.max(16, canvas.width / 40);
+      ctx.font = `bold ${fontSize}px sans-serif`;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.textAlign = 'center';
+      ctx.fillText(watermarkText, canvas.width / 2, canvas.height - fontSize * 1.5);
+    }
+
+    // 캔버스를 Blob으로 변환
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        resolve(blob);
+      }, 'image/png');
+    });
+  } catch (error) {
+    console.error('Image capture error:', error);
+    return null;
+  }
+};
+
+/**
+ * 이미지로 공유 (Web Share API)
+ */
+export const shareAsImage = async (
+  element: HTMLElement,
+  language: Language
+): Promise<{ success: boolean; message: string }> => {
+  const blob = await captureElementAsImage(element, language);
+
+  if (!blob) {
+    const message = language === 'ko'
+      ? '이미지 생성에 실패했습니다.'
+      : 'Failed to generate image.';
+    return { success: false, message };
+  }
+
+  // Web Share API 지원 확인
+  if (navigator.share && navigator.canShare) {
+    const file = new File([blob], 'squad-sniper-result.png', { type: 'image/png' });
+    const shareData = {
+      files: [file],
+      title: 'SQUAD SNIPER',
+      text: language === 'ko' ? '우리 팀 드래프트 결과!' : 'Our Team Draft Results!',
+    };
+
+    if (navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+        return {
+          success: true,
+          message: language === 'ko' ? '공유됨! ✓' : 'Shared! ✓',
+        };
+      } catch (error) {
+        if ((error as Error).name === 'AbortError') {
+          return {
+            success: false,
+            message: language === 'ko' ? '공유가 취소되었습니다.' : 'Share cancelled.',
+          };
+        }
+        console.error('Share error:', error);
+      }
+    }
+  }
+
+  // 폴백: 이미지 다운로드
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'squad-sniper-result.png';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  return {
+    success: true,
+    message: language === 'ko' ? '이미지가 다운로드되었습니다! ✓' : 'Image downloaded! ✓',
+  };
+};
+
+/**
+ * 이미지 다운로드
+ */
+export const downloadAsImage = async (
+  element: HTMLElement,
+  language: Language
+): Promise<{ success: boolean; message: string }> => {
+  const blob = await captureElementAsImage(element, language);
+
+  if (!blob) {
+    const message = language === 'ko'
+      ? '이미지 생성에 실패했습니다.'
+      : 'Failed to generate image.';
+    return { success: false, message };
+  }
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'squad-sniper-result.png';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  return {
+    success: true,
+    message: language === 'ko' ? '이미지가 다운로드되었습니다! ✓' : 'Image downloaded! ✓',
+  };
 };

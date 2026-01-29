@@ -254,6 +254,8 @@ export const TRANSLATIONS = {
       facebook: 'Facebook',
       copyInstruction: '텍스트를 복사한 후 붙여넣기 하세요',
       instagramNote: '스토리에 공유하거나 캡션으로 사용하세요',
+      shareImage: '이미지 공유',
+      downloadImage: '이미지 저장',
     }
   },
   en: {
@@ -335,6 +337,8 @@ export const TRANSLATIONS = {
       facebook: 'Facebook',
       copyInstruction: 'Copy text and paste to share',
       instagramNote: 'Share to Story or use as caption',
+      shareImage: 'Share Image',
+      downloadImage: 'Save Image',
     }
   }
 };
