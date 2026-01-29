@@ -1,13 +1,6 @@
 {
-  "routes": [
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "status": 404,
-      "dest": "/404.html"
-    }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
     {
@@ -36,20 +29,11 @@
       ]
     },
     {
-      "source": "/static/(.*)",
+      "source": "/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)\\.(?:jpg|jpeg|png|gif|svg|webp|ico)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=2592000, must-revalidate"
         }
       ]
     }
