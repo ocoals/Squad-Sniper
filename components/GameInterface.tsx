@@ -87,7 +87,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
   const animationRef = useRef<number>();
   const timerRef = useRef<NodeJS.Timeout>();
   const lastTickRef = useRef<number>(SHOT_CLOCK_SECONDS);
-  const resultScreenRef = useRef<HTMLDivElement>(null);
+  const captureAreaRef = useRef<HTMLDivElement>(null);
 
   const currentPlayer = players[shuffledIndices[currentPlayerIndex]]; // Use shuffled index
   const remainingPlayers = players.length - currentPlayerIndex;
@@ -356,26 +356,31 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
   if (isComplete) {
     return (
       <div className="relative w-full h-screen overflow-hidden font-sans select-none bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
-        <div ref={resultScreenRef} className="text-center">
-          <Trophy className="w-24 h-24 text-yellow-400 mx-auto mb-6 animate-bounce" />
-          <h1 className="text-4xl md:text-6xl font-display text-white mb-4">{t.squadComplete}</h1>
-          <p className="text-gray-400 mb-8">{assignedPlayers.length} {t.rolesAssigned}</p>
+        <div className="text-center">
+          {/* 캡처할 영역만 감싸기 */}
+          <div ref={captureAreaRef} className="inline-block">
+            <Trophy className="w-24 h-24 text-yellow-400 mx-auto mb-6 animate-bounce" />
+            <h1 className="text-4xl md:text-6xl font-display text-white mb-4">{t.squadComplete}</h1>
+            <p className="text-gray-400 mb-8">{assignedPlayers.length} {t.rolesAssigned}</p>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8 px-4">
-            {assignedPlayers.map((ap, i) => (
-              <div key={i} className={`${ap.role.color} p-4 rounded-xl text-white text-center`}>
-                <div className="text-2xl font-display">{ap.role.shortName}</div>
-                <div className="text-sm opacity-80">{ap.player.name}</div>
-                {(ap.player.customMission || ROLE_MISSIONS[ap.role.shortName]) && (
-                  <div className="text-xs mt-2 opacity-70">
-                    {ap.player.customMission || ROLE_MISSIONS[ap.role.shortName]?.[language] || ''}
-                  </div>
-                )}
-              </div>
-            ))}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8 px-4">
+              {assignedPlayers.map((ap, i) => (
+                <div key={i} className={`${ap.role.color} p-4 rounded-xl text-white text-center`}>
+                  <div className="text-2xl font-display">{ap.role.shortName}</div>
+                  <div className="text-sm opacity-80">{ap.player.name}</div>
+                  {(ap.player.customMission || ROLE_MISSIONS[ap.role.shortName]) && (
+                    <div className="text-xs mt-2 opacity-70">
+                      {ap.player.customMission || ROLE_MISSIONS[ap.role.shortName]?.[language] || ''}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
+          {/* 캡처 영역 끝 */}
 
-          <div className="mb-4">
+          {/* ShareButton과 Back to Setup 버튼은 캡처 영역 밖 */}
+          <div className="mb-4 mt-8">
             <ShareButton
               assignedPlayers={assignedPlayers.map(ap => ({
                 ...ap.player,
@@ -383,7 +388,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
                 shortRole: ap.role.shortName,
               }))}
               language={language}
-              resultElementRef={resultScreenRef}
+              resultElementRef={captureAreaRef}
             />
           </div>
 
