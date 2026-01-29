@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Player } from '../types';
 import { Jersey } from './Jersey';
+import { ShareButton } from './ShareButton';
 import { Volume2, VolumeX, ArrowLeft, Target, Gamepad2, Crosshair, Timer, AlertTriangle, Trophy, CheckCircle, Zap, Globe, BookOpen, X } from 'lucide-react';
 import { SHOT_CLOCK_SECONDS, APP_NAME, generateRolesForPlayerCount, ROLE_MISSIONS, COLORS, Language, TRANSLATIONS } from '../constants';
 import { playBeep, shuffleArray } from '../utils/audio';
@@ -371,6 +372,17 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
                 )}
               </div>
             ))}
+          </div>
+
+          <div className="mb-4">
+            <ShareButton
+              assignedPlayers={assignedPlayers.map(ap => ({
+                ...ap.player,
+                role: ap.role.fullName,
+                shortRole: ap.role.shortName,
+              }))}
+              language={language}
+            />
           </div>
 
           <button onClick={onBack} className="px-10 py-4 bg-neon-blue text-black font-bold text-lg uppercase rounded-full hover:bg-white transition-all">

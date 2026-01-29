@@ -238,6 +238,22 @@ export const TRANSLATIONS = {
       contactSupport: '고객 지원',
       startingXI: '주전 선발',
       missionPlaceholder: '미션 (선택 사항)'
+    },
+    share: {
+      button: '📤 결과 공유',
+      title: '결과 공유하기',
+      shareVia: '공유하기',
+      copyText: '텍스트 복사',
+      copyLink: '링크 복사',
+      copied: '복사됨! ✓',
+      copyFailed: '복사 실패',
+      close: '닫기',
+      kakao: '카카오톡',
+      instagram: '인스타그램',
+      twitter: 'Twitter/X',
+      facebook: 'Facebook',
+      copyInstruction: '텍스트를 복사한 후 붙여넣기 하세요',
+      instagramNote: '스토리에 공유하거나 캡션으로 사용하세요',
     }
   },
   en: {
@@ -303,6 +319,22 @@ export const TRANSLATIONS = {
       contactSupport: 'Contact Support',
       startingXI: 'STARTING XI',
       missionPlaceholder: 'Mission (optional)'
+    },
+    share: {
+      button: '📤 Share Results',
+      title: 'Share Results',
+      shareVia: 'Share via',
+      copyText: 'Copy Text',
+      copyLink: 'Copy Link',
+      copied: 'Copied! ✓',
+      copyFailed: 'Copy Failed',
+      close: 'Close',
+      kakao: 'KakaoTalk',
+      instagram: 'Instagram',
+      twitter: 'Twitter/X',
+      facebook: 'Facebook',
+      copyInstruction: 'Copy text and paste to share',
+      instagramNote: 'Share to Story or use as caption',
     }
   }
 };
