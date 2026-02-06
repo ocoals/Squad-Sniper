@@ -3,26 +3,26 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://squad-sniper.vercel.app/</loc>
+    <loc>https://squadsniper.win/</loc>
     <lastmod>2026-01-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://squad-sniper.vercel.app/?lang=ko" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://squad-sniper.vercel.app/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://squadsniper.win/?lang=ko" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://squadsniper.win/?lang=en" />
     <image:image>
-      <image:loc>https://squad-sniper.vercel.app/Logo.webp</image:loc>
+      <image:loc>https://squadsniper.win/Logo.webp</image:loc>
       <image:title>SQUAD SNIPER Logo</image:title>
       <image:caption>SQUAD SNIPER - 축구 포지션 배정 게임 | 공정한 드래프트 도구</image:caption>
     </image:image>
   </url>
   <url>
-    <loc>https://squad-sniper.vercel.app/privacy.html</loc>
+    <loc>https://squadsniper.win/privacy.html</loc>
     <lastmod>2026-01-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://squad-sniper.vercel.app/terms.html</loc>
+    <loc>https://squadsniper.win/terms.html</loc>
     <lastmod>2026-01-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>

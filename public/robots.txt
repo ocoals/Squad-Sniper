@@ -7,4 +7,4 @@ Disallow: /ads.txt
 Disallow: /google*.html
 
 # Sitemap
-Sitemap: https://squad-sniper.vercel.app/sitemap.xml
+Sitemap: https://squadsniper.win/sitemap.xml

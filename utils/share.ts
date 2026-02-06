@@ -55,8 +55,8 @@ export const generateShareText = (
 
   // CTA
   const cta = isKorean
-    ? '\n\n당신의 팀도 공정하게 포지션 배정해보세요!\n👉 https://squad-sniper.vercel.app'
-    : '\n\nDraft your team fairly with SQUAD SNIPER!\n👉 https://squad-sniper.vercel.app';
+    ? '\n\n당신의 팀도 공정하게 포지션 배정해보세요!\n👉 https://squadsniper.win'
+    : '\n\nDraft your team fairly with SQUAD SNIPER!\n👉 https://squadsniper.win';
 
   // 해시태그
   const hashtags = isKorean
@@ -88,7 +88,7 @@ export const shareViaWebAPI = async (
     await navigator.share({
       title: 'SQUAD SNIPER',
       text: shareText,
-      url: 'https://squad-sniper.vercel.app',
+      url: 'https://squadsniper.win',
     });
     return true;
   } catch (error) {
@@ -117,7 +117,7 @@ export const shareViaTwitter = (
  * Facebook 공유
  */
 export const shareViaFacebook = (): void => {
-  const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://squad-sniper.vercel.app')}`;
+  const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://squadsniper.win')}`;
   window.open(url, '_blank', 'noopener,noreferrer');
 };
 
@@ -181,7 +181,7 @@ export const copyToClipboard = async (text: string): Promise<boolean> => {
  * 링크 복사
  */
 export const copyLink = async (): Promise<boolean> => {
-  return copyToClipboard('https://squad-sniper.vercel.app');
+  return copyToClipboard('https://squadsniper.win');
 };
 
 /**
@@ -205,7 +205,7 @@ export const captureElementAsImage = async (
     // 워터마크 추가
     const ctx = canvas.getContext('2d');
     if (ctx) {
-      const watermarkText = 'squad-sniper.vercel.app';
+      const watermarkText = 'squadsniper.win';
       const fontSize = Math.max(16, canvas.width / 40);
       ctx.font = `bold ${fontSize}px sans-serif`;
       ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
