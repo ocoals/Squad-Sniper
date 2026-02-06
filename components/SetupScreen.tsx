@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Player } from '../types';
-import { Play, Plus, Trash2, Users, Target, UserPlus, Globe, ChevronDown, Crosshair, Trophy } from 'lucide-react';
+import { Play, Plus, Trash2, Users, Target, UserPlus, Globe, ChevronDown, Crosshair, Trophy, Lightbulb, Briefcase } from 'lucide-react';
 import { COLORS, APP_NAME, ROLE_DEFINITIONS, EXTRA_ROLE_DEFINITIONS, Language, TRANSLATIONS } from '../constants';
+import { AdUnit } from './AdUnit';
+import { ADSENSE_CONFIG } from '../config/adsense';
 
 interface SetupScreenProps {
     players: Player[];
@@ -121,6 +123,11 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                             </div>
                         )}
                     </div>
+                </div>
+
+                {/* AD UNIT: Left Column Mobile/Desktop */}
+                <div className="md:hidden w-full mt-4">
+                    <AdUnit slot={ADSENSE_CONFIG.AD_SLOTS.MOBILE_TOP} label="Mobile Top" />
                 </div>
 
                 {/* Right Column: Interactive Glass Panel */}
@@ -265,6 +272,9 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                     </div>
                 </div>
 
+                {/* AD UNIT: Mid Page */}
+                <AdUnit slot={ADSENSE_CONFIG.AD_SLOTS.MID_CONTENT} label="Mid Content" className="max-w-4xl mx-auto" />
+
                 {/* FAQ / Detailed Info */}
                 <div className="bg-white/5 rounded-3xl p-8 md:p-12 border border-white/10">
                     <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
@@ -291,16 +301,81 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                     </div>
                 </div>
 
+                {/* Strategy Guide Section */}
+                <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-3xl p-8 md:p-12 border border-orange-500/20">
+                    <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                        <Lightbulb size={24} className="text-orange-500" />
+                        {t.setup.tipsTitle}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="bg-black/20 rounded-2xl p-6 border border-white/10">
+                            <div className="text-3xl mb-3">🎯</div>
+                            <h5 className="text-orange-400 font-bold mb-2">{t.setup.tip1Title}</h5>
+                            <p className="text-gray-400 text-sm">{t.setup.tip1Desc}</p>
+                        </div>
+                        <div className="bg-black/20 rounded-2xl p-6 border border-white/10">
+                            <div className="text-3xl mb-3">⏱️</div>
+                            <h5 className="text-orange-400 font-bold mb-2">{t.setup.tip2Title}</h5>
+                            <p className="text-gray-400 text-sm">{t.setup.tip2Desc}</p>
+                        </div>
+                        <div className="bg-black/20 rounded-2xl p-6 border border-white/10">
+                            <div className="text-3xl mb-3">✏️</div>
+                            <h5 className="text-orange-400 font-bold mb-2">{t.setup.tip3Title}</h5>
+                            <p className="text-gray-400 text-sm">{t.setup.tip3Desc}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Use Cases Section */}
+                <div className="bg-white/5 rounded-3xl p-8 md:p-12 border border-white/10">
+                    <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                        <Briefcase size={24} className="text-purple-500" />
+                        {t.setup.useCasesTitle}
+                    </h3>
+                    <div className="space-y-6">
+                        <div className="flex items-start gap-4 bg-black/20 rounded-xl p-6 border border-purple-500/20">
+                            <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center flex-shrink-0 text-2xl">
+                                ⚽
+                            </div>
+                            <div>
+                                <h5 className="text-purple-400 font-bold mb-2">{t.setup.useCase1Title}</h5>
+                                <p className="text-gray-400 text-sm">{t.setup.useCase1Desc}</p>
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-4 bg-black/20 rounded-xl p-6 border border-purple-500/20">
+                            <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center flex-shrink-0 text-2xl">
+                                🏃
+                            </div>
+                            <div>
+                                <h5 className="text-purple-400 font-bold mb-2">{t.setup.useCase2Title}</h5>
+                                <p className="text-gray-400 text-sm">{t.setup.useCase2Desc}</p>
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-4 bg-black/20 rounded-xl p-6 border border-purple-500/20">
+                            <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center flex-shrink-0 text-2xl">
+                                🎉
+                            </div>
+                            <div>
+                                <h5 className="text-purple-400 font-bold mb-2">{t.setup.useCase3Title}</h5>
+                                <p className="text-gray-400 text-sm">{t.setup.useCase3Desc}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* AD UNIT: Bottom Page */}
+                <AdUnit slot={ADSENSE_CONFIG.AD_SLOTS.BOTTOM_CONTENT} label="Bottom Content" className="max-w-4xl mx-auto" />
+
                 {/* Simple Footer */}
                 <footer className="pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 opacity-60">
                     <div className="flex flex-col gap-2 text-sm text-gray-400">
                         <div>© 2026 {APP_NAME}. All rights reserved.</div>
                         <div className="text-xs text-gray-500">Last Updated: 2026년 1월</div>
                     </div>
-                    <div className="flex gap-8 text-xs font-bold tracking-widest uppercase">
+                    <div className="flex flex-wrap gap-4 md:gap-8 text-xs font-bold tracking-widest uppercase">
                         <a href="/privacy.html" className="hover:text-red-500 transition-colors">{t.setup.privacyPolicy}</a>
                         <a href="/terms.html" className="hover:text-red-500 transition-colors">{t.setup.termsOfService}</a>
-                        <a href={`mailto:support@squadsniper.com?subject=[${APP_NAME}] Support Request`} className="hover:text-red-500 transition-colors">{t.setup.contactSupport}</a>
+                        <a href="/contact.html" className="hover:text-red-500 transition-colors">{t.setup.contactSupport}</a>
                     </div>
                 </footer>
 
