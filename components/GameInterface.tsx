@@ -3,6 +3,7 @@ import { Player } from '../types';
 import { Jersey } from './Jersey';
 import { ShareButton } from './ShareButton';
 import { Volume2, VolumeX, ArrowLeft, Target, Gamepad2, Crosshair, Timer, AlertTriangle, Trophy, CheckCircle, Zap, Globe, BookOpen, X } from 'lucide-react';
+import { Joystick } from './Joystick';
 import { SHOT_CLOCK_SECONDS, APP_NAME, generateRolesForPlayerCount, ROLE_MISSIONS, COLORS, Language, TRANSLATIONS } from '../constants';
 import { playBeep, shuffleArray } from '../utils/audio';
 
@@ -88,9 +89,21 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
   const timerRef = useRef<NodeJS.Timeout>();
   const lastTickRef = useRef<number>(SHOT_CLOCK_SECONDS);
   const captureAreaRef = useRef<HTMLDivElement>(null);
+  const joystickRef = useRef({ x: 0, y: 0 });
 
   const currentPlayer = players[shuffledIndices[currentPlayerIndex]]; // Use shuffled index
   const remainingPlayers = players.length - currentPlayerIndex;
+
+  // 모바일 조이스틱 콜백
+  const handleJoystickMove = useCallback((x: number, y: number) => {
+    joystickRef.current = { x, y };
+  }, []);
+
+  // 모바일 정밀 모드 토글
+  const togglePrecision = () => {
+    setIsPrecisionMode(prev => !prev);
+    if (soundEnabled) playBeep('tick');
+  };
 
   // Lock scroll during game
   useEffect(() => {
@@ -186,11 +199,22 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
     const speed = isPrecisionMode ? SCOPE_SPEED_PRECISION : SCOPE_SPEED_NORMAL;
     if (!isShooting) {
       setScopePos(prev => {
-        let x = prev.x, y = prev.y;
-        if (keysPressed.current.has('arrowleft') || keysPressed.current.has('a')) x -= speed;
-        if (keysPressed.current.has('arrowright') || keysPressed.current.has('d')) x += speed;
-        if (keysPressed.current.has('arrowup') || keysPressed.current.has('w')) y -= speed;
-        if (keysPressed.current.has('arrowdown') || keysPressed.current.has('s')) y += speed;
+        let dx = 0;
+        let dy = 0;
+
+        // 키보드 입력
+        if (keysPressed.current.has('arrowleft') || keysPressed.current.has('a')) dx -= 1;
+        if (keysPressed.current.has('arrowright') || keysPressed.current.has('d')) dx += 1;
+        if (keysPressed.current.has('arrowup') || keysPressed.current.has('w')) dy -= 1;
+        if (keysPressed.current.has('arrowdown') || keysPressed.current.has('s')) dy += 1;
+
+        // 조이스틱 입력 (합산)
+        dx += joystickRef.current.x;
+        dy += joystickRef.current.y;
+
+        const x = prev.x + dx * speed;
+        const y = prev.y + dy * speed;
+
         return { x: Math.max(8, Math.min(92, x)), y: Math.max(10, Math.min(70, y)) };
       });
     }
@@ -570,12 +594,40 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ players, onBack, l
 
       {/* Shoot Button */}
       {!currentResult && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 hidden md:block">
           <button onClick={handleShoot} disabled={isShooting}
             className={`px-10 py-4 rounded-full font-display text-xl uppercase transition-all ${isShooting ? 'bg-gray-700 text-gray-500' : currentTargetIdx >= 0 ? 'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-[0_0_40px_rgba(0,255,0,0.6)] border-2 border-green-400' : 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-[0_0_40px_rgba(220,38,38,0.6)] border-2 border-red-400'}`}>
             {isShooting ? 'FIRING...' : '🎯 SHOOT'}
           </button>
         </div>
+      )}
+
+      {/* 모바일 컨트롤 */}
+      {!currentResult && !isComplete && (
+        <>
+          {/* 좌하단: 조이스틱 */}
+          <div className="absolute bottom-8 left-8 z-50 md:hidden">
+            <Joystick onMove={handleJoystickMove} size={140} />
+          </div>
+
+          {/* 우하단: 정밀 모드 토글 + 슈팅 버튼 */}
+          <div className="absolute bottom-8 right-8 z-50 flex flex-col gap-4 items-end md:hidden">
+            <button
+              onClick={togglePrecision}
+              className={`w-16 h-16 rounded-full border-2 flex items-center justify-center transition-all ${isPrecisionMode ? 'bg-lime-500/20 border-lime-400 text-lime-400 shadow-[0_0_15px_rgba(132,204,22,0.5)]' : 'bg-black/40 border-white/20 text-white/50'}`}
+            >
+              <Target size={32} />
+            </button>
+
+            <button
+              onClick={handleShoot}
+              disabled={isShooting}
+              className={`w-20 h-20 rounded-full border-4 flex items-center justify-center shadow-lg active:scale-95 transition-all ${isShooting ? 'bg-gray-700 border-gray-600' : currentTargetIdx >= 0 ? 'bg-green-600 border-green-400 shadow-green-500/30' : 'bg-red-600 border-red-400 shadow-red-500/30'}`}
+            >
+              <Crosshair size={40} className="text-white" />
+            </button>
+          </div>
+        </>
       )}
 
       {/* Result Modal */}
