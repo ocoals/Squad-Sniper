@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Player } from '../types';
 import { Play, Plus, Trash2, Users, Target, UserPlus, Globe, ChevronDown, Crosshair, Trophy, Lightbulb, Briefcase } from 'lucide-react';
-import { COLORS, APP_NAME, ROLE_DEFINITIONS, EXTRA_ROLE_DEFINITIONS, Language, TRANSLATIONS } from '../constants';
+import { COLORS, APP_NAME, ROLE_DEFINITIONS, EXTRA_ROLE_DEFINITIONS, Language, TRANSLATIONS, ROLE_MISSIONS } from '../constants';
 import { AdUnit } from './AdUnit';
 import { ADSENSE_CONFIG } from '../config/adsense';
 
@@ -360,6 +360,34 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ players, onPlayersChan
                                 <p className="text-gray-400 text-sm">{t.setup.useCase3Desc}</p>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                {/* Position & Mission Guide Section */}
+                <div className="bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-3xl p-8 md:p-12 border border-blue-500/20">
+                    <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                        <Users size={24} className="text-blue-400" />
+                        {language === 'ko' ? '포지션 & 미션 가이드' : 'Position & Mission Guide'}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {ROLE_DEFINITIONS.map((role) => (
+                            <div key={role.shortName} className="bg-black/40 p-5 rounded-xl border border-white/5 hover:border-blue-500/30 transition-all flex flex-col gap-3 group">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-10 h-10 rounded-lg ${role.color} flex items-center justify-center text-xs font-bold text-white shadow-lg group-hover:scale-110 transition-transform`}>
+                                            {role.shortName}
+                                        </div>
+                                        <div>
+                                            <div className="font-bold text-white text-sm">{role.fullName}</div>
+                                            <div className="text-[10px] font-mono text-blue-400">#{role.number}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="text-xs text-gray-400 border-t border-white/5 pt-3 mt-1 leading-relaxed">
+                                    {ROLE_MISSIONS[role.shortName] ? ROLE_MISSIONS[role.shortName][language] : '-'}
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
 
